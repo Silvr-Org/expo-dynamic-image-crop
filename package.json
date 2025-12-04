@@ -7,6 +7,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "rm -rf lib && tsc",
+    "prepare": "npm run build",
     "prepublishOnly": "npm run build",
     "publish:patch": "rm -rf lib && npm version patch && npm publish",
     "publish:minor": "rm -rf lib && npm version minor && npm publish",
