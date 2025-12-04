@@ -6,15 +6,13 @@ import { usePerformCrop } from "./hooks/usePerformCrop";
 import { useEditorStore } from "./store";
 
 function ControlBar() {
-  const isEdit = useEditorStore((s) => s.isEdit);
-  const setIsEdit = useEditorStore((s) => s.setIsEdit);
   const { controlBar } = useEditorStore((s) => s.editorOptions);
   const { onBackPress, onSave } = useContext(EditorContext);
   const performCrop = usePerformCrop();
 
   const onEditDone = async () => {
     await performCrop();
-    setIsEdit(true);
+    onSave();
   };
 
   return (
@@ -28,41 +26,17 @@ function ControlBar() {
       ]}
     >
       <IconButton
-        iconID={
-          !isEdit
-            ? controlBar?.cancelButton?.iconName!
-            : controlBar?.backButton?.iconName!
-        }
-        color={
-          !isEdit
-            ? controlBar?.cancelButton?.color!
-            : controlBar?.backButton?.color!
-        }
-        text={
-          !isEdit
-            ? controlBar?.cancelButton?.text!
-            : controlBar?.backButton?.text!
-        }
-        onPress={() => {
-          onBackPress();
-          setIsEdit(false);
-        }}
+        iconID={controlBar?.cancelButton?.iconName!}
+        color={controlBar?.cancelButton?.color!}
+        text={controlBar?.cancelButton?.text!}
+        onPress={onBackPress}
       />
-      {!isEdit ? (
-        <IconButton
-          iconID={controlBar?.cropButton?.iconName!}
-          text={controlBar?.cropButton?.text!}
-          color={controlBar?.cropButton?.color!}
-          onPress={onEditDone}
-        />
-      ) : (
-        <IconButton
-          iconID={controlBar?.saveButton?.iconName!}
-          text={controlBar?.saveButton?.text!}
-          color={controlBar?.saveButton?.color!}
-          onPress={onSave}
-        />
-      )}
+      <IconButton
+        iconID={controlBar?.cropButton?.iconName!}
+        text={controlBar?.cropButton?.text!}
+        color={controlBar?.cropButton?.color!}
+        onPress={onEditDone}
+      />
     </View>
   );
 }
