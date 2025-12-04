@@ -66,7 +66,9 @@ function ImageEditorCore(props: Omit<ImageEditorProps, "isVisible">) {
   };
 
   const onSave = () => {
-    onEditingComplete(imageData);
+    // Get the latest imageData from the store to ensure we have the cropped result
+    const currentImageData = useEditorStore.getState().imageData;
+    onEditingComplete(currentImageData);
     resetEditorStore();
   };
 

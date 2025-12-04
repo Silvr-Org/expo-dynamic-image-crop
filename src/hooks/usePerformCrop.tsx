@@ -31,7 +31,6 @@ export const usePerformCrop = () => {
       const { uri, width, height } = cropResult;
       setImageData({ uri, width, height });
       setProcessing(false);
-      setEditingMode("operation-select");
     } catch (error) {
       setProcessing(false);
       Alert.alert("An error occurred while editing.");
