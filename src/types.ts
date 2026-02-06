@@ -1,5 +1,5 @@
-import { ReactNode, ComponentProps } from "react";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { ComponentProps, ReactNode } from "react";
 
 export type MaterialIconNames = ComponentProps<typeof MaterialIcons>["name"];
 export type FeatherIconNames = ComponentProps<typeof Feather>["name"];
@@ -45,4 +45,14 @@ export type ImageEditorProps = {
   imageUri: string | null;
   processingComponent?: ReactNode;
   isVisible: boolean;
+  /** Initial crop box in original image pixel coordinates.
+   *  - undefined: default centered crop (normal behavior)
+   *  - null: hide crop overlay until coordinates are provided
+   *  - { x, y, width, height }: position overlay at these image pixel coordinates */
+  initialCropBox?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null;
 };

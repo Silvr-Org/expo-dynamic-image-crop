@@ -29,11 +29,12 @@ const ImageCropOverlay = () => {
   const imageBounds = useEditorStore((s) => s.imageBounds);
   const accumulatedPan = useEditorStore((s) => s.accumulatedPan);
   const setAccumulatedPan = useEditorStore((s) => s.setAccumulatedPan);
+  const imageScaleFactor = useEditorStore((s) => s.imageScaleFactor);
   const { gridOverlayColor, coverMarker, overlayCropColor } = useEditorStore(
     (s) => s.editorOptions
   );
 
-  const { fixedAspectRatio, minimumCropDimensions, dynamicCrop } =
+  const { fixedAspectRatio, minimumCropDimensions, dynamicCrop, initialCropBox } =
     useContext(EditorContext);
   const [animatedCropSize] = useState({
     width: new Animated.Value(cropSize.width),
@@ -63,16 +64,32 @@ const ImageCropOverlay = () => {
   }, [accumulatedPan, isDragging]);
 
   useEffect(() => {
-    const newSize = { width: 0, height: 0 };
     const { width, height } = imageBounds;
+    if (!width || !height) return;
+
+    // If initialCropBox is being used and is null, don't initialize yet (overlay is hidden)
+    if (initialCropBox === null) return;
+
+    // If initialCropBox coordinates are provided, use them (in image pixel coords → screen coords)
+    if (initialCropBox && imageScaleFactor) {
+      const screenWidth = initialCropBox.width / imageScaleFactor;
+      const screenHeight = initialCropBox.height / imageScaleFactor;
+      const screenX = imageBounds.x + (initialCropBox.x / imageScaleFactor);
+      const screenY = imageBounds.y + (initialCropBox.y / imageScaleFactor);
+
+      setCropSize({ width: screenWidth, height: screenHeight });
+      setAccumulatedPan({ x: screenX, y: screenY });
+      return;
+    }
+
+    // Default behavior: centered crop
+    const newSize = { width: 0, height: 0 };
 
     if (dynamicCrop) {
-      // For dynamic crop, start with a reasonable default size (80% of smaller dimension)
       const smallerDimension = Math.min(width, height);
       newSize.width = smallerDimension * 0.8;
       newSize.height = smallerDimension * 0.8;
     } else {
-      // Original fixed aspect ratio logic
       const imageAspectRatio = width / height;
       if (fixedAspectRatio < imageAspectRatio) {
         newSize.height = height * 0.8;
@@ -85,7 +102,6 @@ const ImageCropOverlay = () => {
 
     setCropSize(newSize);
 
-    // Center the crop area within the image bounds
     const centeredX = imageBounds.x + (imageBounds.width - newSize.width) / 2;
     const centeredY = imageBounds.y + (imageBounds.height - newSize.height) / 2;
 
@@ -93,7 +109,7 @@ const ImageCropOverlay = () => {
       x: centeredX,
       y: centeredY,
     });
-  }, [imageBounds, dynamicCrop]);
+  }, [imageBounds, dynamicCrop, initialCropBox, imageScaleFactor]);
 
   const isMovingSection = () =>
     selectedFrameSection === "topmiddle" ||
@@ -468,6 +484,11 @@ const ImageCropOverlay = () => {
       setAccumulatedPan({ x: newX, y: newY });
     }
   };
+
+  // Hide the overlay when initialCropBox is null (waiting for coordinates)
+  if (initialCropBox === null) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>

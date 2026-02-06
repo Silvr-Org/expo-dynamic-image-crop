@@ -7,6 +7,12 @@ export type EditorContextData = {
   onBackPress: () => void;
   onSave: () => void;
   imageUri: string | null;
+  initialCropBox?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null;
 };
 
 export const EditorContext = createContext<EditorContextData>({} as EditorContextData);

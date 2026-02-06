@@ -1,19 +1,17 @@
-import React, { useRef, useState } from "react";
 import * as ImageManipulator from "expo-image-manipulator";
-import { ReactNode, useCallback, useEffect } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Modal,
   StatusBar,
   StyleSheet,
-  View,
+  View
 } from "react-native";
-import { ImageEditorProps } from "./types";
 import { EditorContext } from "./context/editor";
 import { ControlBar } from "./ControlBar";
 import { EditingWindow } from "./EditingWindow";
 import { Processing } from "./Processing";
 import { useEditorStore } from "./store";
+import { ImageEditorProps } from "./types";
 
 function ImageEditorCore(props: Omit<ImageEditorProps, "isVisible">) {
   const {
@@ -25,6 +23,7 @@ function ImageEditorCore(props: Omit<ImageEditorProps, "isVisible">) {
     imageUri = null,
     processingComponent,
     editorOptions,
+    initialCropBox,
   } = props;
 
   const options = useEditorStore((s) => s.editorOptions);
@@ -105,6 +104,7 @@ function ImageEditorCore(props: Omit<ImageEditorProps, "isVisible">) {
         onBackPress,
         onSave,
         imageUri,
+        initialCropBox,
       }}
     >
       <StatusBar hidden={true} />
