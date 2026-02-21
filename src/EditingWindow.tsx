@@ -14,6 +14,7 @@ export function EditingWindow() {
   const setImageBounds = useEditorStore((s) => s.setImageBounds);
   const setImageScaleFactor = useEditorStore((s) => s.setImageScaleFactor);
   const editingMode = useEditorStore((s) => s.editingMode);
+  const { contentInsets } = useEditorStore((s) => s.editorOptions);
   const isCropping = editingMode === "crop";
 
   const getImageFrame = (layout: Layout) => {
@@ -58,8 +59,15 @@ export function EditingWindow() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageData]);
 
+  const insetStyle = contentInsets ? {
+    paddingTop: contentInsets.top ?? 0,
+    paddingBottom: contentInsets.bottom ?? 0,
+    paddingLeft: contentInsets.left ?? 0,
+    paddingRight: contentInsets.right ?? 0,
+  } : undefined;
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, insetStyle]}>
       <Image
         style={styles.image}
         source={{ uri: imageData.uri }}
