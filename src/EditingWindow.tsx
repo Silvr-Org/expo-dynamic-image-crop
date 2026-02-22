@@ -4,6 +4,8 @@ import { ImageCropOverlay } from "./ImageCropOverlay";
 import { useEditorStore } from "./store";
 
 type Layout = {
+  x: number;
+  y: number;
   width: number;
   height: number;
 };
@@ -25,10 +27,11 @@ export function EditingWindow() {
     if (layout) {
       const editingWindowAspectRatio = layout.height / layout.width;
       const imageAspectRatio = imageData.height / imageData.width;
-      const bounds = { x: 0, y: 0, width: 0, height: 0 };
+      // Start from the image's layout position to account for container padding
+      const bounds = { x: layout.x, y: layout.y, width: 0, height: 0 };
       let imageScaleFactor = 1;
       if (imageAspectRatio > editingWindowAspectRatio) {
-        bounds.x =
+        bounds.x +=
           (((imageAspectRatio - editingWindowAspectRatio) / imageAspectRatio) *
             layout.width) /
           2;
@@ -36,7 +39,7 @@ export function EditingWindow() {
         bounds.height = layout.height;
         imageScaleFactor = imageData.height / layout.height;
       } else {
-        bounds.y =
+        bounds.y +=
           (((1 / imageAspectRatio - 1 / editingWindowAspectRatio) /
             (1 / imageAspectRatio)) *
             layout.height) /
@@ -47,10 +50,7 @@ export function EditingWindow() {
       }
       setImageBounds(bounds);
       setImageScaleFactor(imageScaleFactor);
-      setImageLayout({
-        height: layout.height,
-        width: layout.width,
-      });
+      setImageLayout(layout);
     }
   };
 
