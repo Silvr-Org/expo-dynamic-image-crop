@@ -33,14 +33,6 @@ export type EditorOptions = {
   };
   gridOverlayColor?: string;
   overlayCropColor?: string;
-  /** Insets (in points) applied around the editing area to keep the crop
-   *  overlay away from system UI (status bar, gesture edges, etc.). */
-  contentInsets?: {
-    top?: number;
-    bottom?: number;
-    left?: number;
-    right?: number;
-  };
 };
 
 export type ImageEditorProps = {
