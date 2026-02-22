@@ -14,6 +14,7 @@ export function EditingWindow() {
   const setImageBounds = useEditorStore((s) => s.setImageBounds);
   const setImageScaleFactor = useEditorStore((s) => s.setImageScaleFactor);
   const editingMode = useEditorStore((s) => s.editingMode);
+  const horizontalPadding = useEditorStore((s) => s.editorOptions.horizontalPadding) ?? 0;
   const isCropping = editingMode === "crop";
 
   const getImageFrame = (layout: Layout) => {
@@ -59,7 +60,7 @@ export function EditingWindow() {
   }, [imageData]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, horizontalPadding > 0 && { paddingHorizontal: horizontalPadding }]}>
       <Image
         style={styles.image}
         source={{ uri: imageData.uri }}

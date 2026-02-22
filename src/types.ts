@@ -18,6 +18,9 @@ type IconProps = {
 
 export type EditorOptions = {
   backgroundColor?: string;
+  /** Horizontal padding around the editing area to prevent crop handles
+   *  from overlapping with system edge gestures (e.g. iOS/Android back swipe). */
+  horizontalPadding?: number;
   controlBar?: {
     position?: "top" | "bottom";
     backgroundColor?: string;
