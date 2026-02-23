@@ -1,5 +1,4 @@
 import * as ImageManipulator from "expo-image-manipulator";
-import { Alert } from "react-native";
 import { useEditorStore } from "../store";
 
 export const usePerformCrop = () => {
@@ -14,26 +13,33 @@ export const usePerformCrop = () => {
 
   return async () => {
     try {
-      const croppingBounds = {
-        originX: Math.round(
-          (accumulatedPan.x - imageBounds.x) * imageScaleFactor
-        ),
-        originY: Math.round(
-          (accumulatedPan.y - imageBounds.y) * imageScaleFactor
-        ),
-        width: Math.round(cropSize.width * imageScaleFactor),
-        height: Math.round(cropSize.height * imageScaleFactor),
-      };
+      let originX = Math.round(
+        (accumulatedPan.x - imageBounds.x) * imageScaleFactor
+      );
+      let originY = Math.round(
+        (accumulatedPan.y - imageBounds.y) * imageScaleFactor
+      );
+      let width = Math.round(cropSize.width * imageScaleFactor);
+      let height = Math.round(cropSize.height * imageScaleFactor);
+
+      // Clamp to valid image bounds
+      originX = Math.max(0, originX);
+      originY = Math.max(0, originY);
+      width = Math.min(width, imageData.width - originX);
+      height = Math.min(height, imageData.height - originY);
+      width = Math.max(1, width);
+      height = Math.max(1, height);
+
       setProcessing(true);
       const cropResult = await ImageManipulator.manipulateAsync(imageData.uri, [
-        { crop: croppingBounds },
+        { crop: { originX, originY, width, height } },
       ]);
-      const { uri, width, height } = cropResult;
-      setImageData({ uri, width, height });
+      const { uri, width: w, height: h } = cropResult;
+      setImageData({ uri, width: w, height: h });
       setProcessing(false);
     } catch (error) {
+      console.warn("Crop failed:", error);
       setProcessing(false);
-      Alert.alert("An error occurred while editing.");
     }
   };
 };
